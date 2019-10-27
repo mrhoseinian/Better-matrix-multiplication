@@ -134,7 +134,7 @@ void mydtrsv(char UPLO, double *A, double *B, int n, int *ipiv)
  **/
 void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)
 {
-	int i , j , k , iB, jB , kB;
+	/*int i , j , k , iB, jB , kB;
         for( k = 0;k < maty ; k += b)
                 for( i = 0;i < matx;i += b)
                         for( j = 0;j < matx ;j += b)
@@ -158,7 +158,22 @@ void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)
 
                                                 }
                                         }
-                        }
+                        }*/
+	int i , j , k, iB , jB , kB;
+		for(k = 0;k < maty;k += b)
+			for(i = 0;i < matx;i += b)
+				for( j = 0;j < matx;j += b)
+				{
+					for(kB = k;kB <k + b && kB < maty;kB++)
+						for(iB = i;iB < i + b && iB < matx;iB++)
+						{
+							register double sum = A[iB * n + kB];
+							for(jB = j;jB < j + b && jB < matx;jB++)
+								C[iB * n + jB] -=sum*B[kB * n + jB];
+						}
+				}
+
+
 }
 
 /**
@@ -256,7 +271,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 			}
 			/*Delayed update of rest of matrix using matrix-matrix multiplication*/
 			/*void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)*/
-			mydgemm(&A[(end+1) * n + ib], &A[ib * n + end +1], &A[(end+1) * n + (end + 1)], n , (n - end +1) , (end-ib+1/*=b*/), 32);
+			mydgemm(&A[(end+1) * n + ib], &A[ib * n + end +1], &A[(end+1) * n + (end + 1)], n , (n - end - 1) , (end-ib+1/*=b*/), 32);
 		}
     return 0;
 }

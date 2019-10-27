@@ -213,6 +213,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 				if(max == 0) return -1;
 				else if (maxind !=i)
 				{
+
 					/*Save Pivot Infortmation*/
 					temps = ipiv[i];
 					ipiv[i] = ipiv[maxind];
@@ -226,6 +227,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 						A[maxind * n + j] = tempv;
 					}
 				}
+
 				/*Update columns i+1 to end*/
 				for(j = i + 1; j < n; j++)
 				{
@@ -235,6 +237,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 						A[j*n+t] = A[j*n+t] - A[j*n+i] * A[i*n+t];
 					}
 				}
+
 			}
 
 			/*inv(LL)*/
@@ -253,7 +256,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 			}
 			/*Delayed update of rest of matrix using matrix-matrix multiplication*/
 			/*void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)*/
-			mydgemm(A[end * n + ib -1], A[ib * n + end -1], A[end * n + end -1], n , (n - end +1) , (end-ib+1/*=b*/), 32);
+			mydgemm(&A[(end+1) * n + ib], &A[ib * n + end +1], &A[(end+1) * n + (end + 1)], n , (n - end +1) , (end-ib+1/*=b*/), 32);
 		}
     return 0;
 }

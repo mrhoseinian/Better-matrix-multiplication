@@ -99,6 +99,8 @@ int verify_matrix(const double *C, const double *D, const int m, const int n)
 		diff = fabs(C[i] - D[i]);
         if (diff > 1e-3) 
 		{
+			//printf("correct answer: %f != %f in i = %d\n",C[i],D[i],i);
+			//printf("but look, %f = %f in %d!\n",C[i+1],D[i+1],i+1);
 			break;
 		}
 	}

@@ -1,4 +1,5 @@
 #include "../include/for_you_to_do.h"
+#include <math.h>
 /**
  *
  * this function computes LU factorization
@@ -134,7 +135,7 @@ void mydtrsv(char UPLO, double *A, double *B, int n, int *ipiv)
  **/
 void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)
 {
-	/*int i , j , k , iB, jB , kB;
+	int i , j , k , iB, jB , kB;
         for( k = 0;k < maty ; k += b)
                 for( i = 0;i < matx;i += b)
                         for( j = 0;j < matx ;j += b)
@@ -158,7 +159,7 @@ void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)
 
                                                 }
                                         }
-                        }*/
+                        }/*
 	int i , j , k, iB , jB , kB;
 		for(k = 0;k < maty;k += b)
 			for(i = 0;i < matx;i += b)
@@ -171,7 +172,7 @@ void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)
 							for(jB = j;jB < j + b && jB < matx;jB++)
 								C[iB * n + jB] -=sum*B[kB * n + jB];
 						}
-				}
+				}*/
 
 
 }
@@ -212,7 +213,8 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 		for(ib = 0; ib < n - 1; ib += b)
 		{
 			/*Partial Pivoting*/
-			end = (n > (ib + b -1)) ? (ib + b - 1) : n;
+			end = ((n-1) > (ib + b -1)) ? (ib + b - 1) : n-1;
+			//printf("end = %d\n",end);
 			for(i = ib; i <= end; i++)
 			{
 				maxind = i;
@@ -234,7 +236,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 					ipiv[i] = ipiv[maxind];
 					ipiv[maxind] = temps;
 					/*Swap rows*/
-					for(j = 0; j < n; j++);
+					for(j = 0; j < n; j++)
 					{
 						double tempv;
 						tempv = A[i * n + j];
@@ -252,7 +254,6 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 						A[j*n+t] = A[j*n+t] - A[j*n+i] * A[i*n+t];
 					}
 				}
-
 			}
 
 			/*inv(LL)*/
@@ -271,6 +272,7 @@ int mydgetrf_block(double *A, int *ipiv, int n, int b)
 			}
 			/*Delayed update of rest of matrix using matrix-matrix multiplication*/
 			/*void mydgemm(double *A, double *B, double *C, int n, int matx, int maty, int b)*/
+			//if(end!=n)
 			mydgemm(&A[(end+1) * n + ib], &A[ib * n + end +1], &A[(end+1) * n + (end + 1)], n , (n - end - 1) , (end-ib+1/*=b*/), 32);
 		}
     return 0;
